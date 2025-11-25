@@ -18,23 +18,20 @@ let lastAddTime = 0;
 let minGapHeight = 200;
 let maxGapHeight = 300;
 let wallWidth = 80;
-let wallColors;
+// wallColors tidak dipakai lagi karena tiap dinding punya warna sendiri
 let maxHealth = 100;
 let health = 100;
 let score = 0;
-let healthDecrease = 1; // Kurangi HP jika kena dinding
+let healthDecrease = 1; 
 let healthBarWidth = 60;
 
-// Dalam JS, ArrayList diganti dengan Array biasa []
 let walls = []; 
 
 function setup() {
   createCanvas(800, 500);
   
-  // Inisialisasi warna di dalam setup
   ballColor = color(0);
   racketColor = color(0);
-  wallColors = color(0);
 
   ballX = width / 4;
   ballY = height / 5;
@@ -44,7 +41,7 @@ function draw() {
   if (gameScreen == 0) {
     initScreen();
   } else if (gameScreen == 1) {
-    gameScreenFunc(); // Saya ganti nama karena bentrok dengan variabel gameScreen
+    gameScreenFunc(); 
   } else if (gameScreen == 2) {
     gameOverScreen();
   }
@@ -71,18 +68,28 @@ function gameScreenFunc() {
   wallAdder();
   wallHandler();
   drawHealthBar();
-  printScore(); // Menampilkan skor saat bermain
+  printScore(); 
 }
 
+// --- BAGIAN YANG DIUPDATE: Menampilkan Skor Akhir ---
 function gameOverScreen() {
-  background(0);
+  background(0); // Latar hitam
   textAlign(CENTER, CENTER);
-  fill(255);
+  
+  // Judul Game Over
+  fill(255, 50, 50); // Merah terang
+  textSize(50);
+  text("GAME OVER", width / 2, height / 2 - 60);
+
+  // Menampilkan Skor Akhir
+  fill(255); // Putih
   textSize(30);
-  text("GAME OVER", width / 2, height / 2 - 20);
+  text("Skor Akhir: " + score, width / 2, height / 2);
+
+  // Instruksi Restart
+  fill(200); // Abu-abu terang
   textSize(15);
-  text("(Klik untuk Ulang)", width / 2, height / 2 + 20);
-  printScore(); // Tampilkan skor akhir
+  text("(Klik layar untuk main lagi)", width / 2, height / 2 + 60);
 }
 
 function mousePressed() {
@@ -99,7 +106,7 @@ function startGame() {
   ballX = width / 4;
   ballY = height / 5;
   ballSpeedVert = 0;
-  ballSpeedHorizon = 10; // Reset kecepatan horizontal juga
+  ballSpeedHorizon = 10; 
 }
 
 function drawBall() {
@@ -186,21 +193,25 @@ function wallAdder() {
     let randHeight = round(random(minGapHeight, maxGapHeight));
     let randY = round(random(0, height - randHeight));
     
-    // Dalam JS, kita simpan sebagai array biasa
-    // Format: [x, y, width, height, scored]
-    let randWall = [width, randY, wallWidth, randHeight, 0]; 
+    // Generate Warna Acak
+    let r = random(50, 200);
+    let g = random(50, 200);
+    let b = random(50, 200);
+    let randomColor = color(r, g, b);
+
+    // Format: [x, y, width, height, scored, color]
+    let randWall = [width, randY, wallWidth, randHeight, 0, randomColor]; 
     walls.push(randWall);
     lastAddTime = millis();
   }
 }
 
 function wallHandler() {
-  // Loop terbalik disarankan saat menghapus elemen array
   for (let i = walls.length - 1; i >= 0; i--) {
     wallMover(i);
     wallDrawer(i);
     WatchWallCollision(i);
-    wallRemover(i); // Cek hapus terakhir
+    wallRemover(i); 
   }
 }
 
@@ -211,8 +222,13 @@ function wallDrawer(index) {
   let gapWallWidth = wall[2];
   let gapWallHeight = wall[3];
   
+  // Ambil warna dari array
+  let specificColor = wall[5]; 
+
   rectMode(CORNER);
-  fill(wallColors);
+  fill(specificColor); 
+  noStroke(); 
+  
   rect(gapWallX, 0, gapWallWidth, gapWallY);
   rect(gapWallX, gapWallY + gapWallHeight, gapWallWidth, height - (gapWallY + gapWallHeight));
 }
@@ -225,7 +241,7 @@ function wallMover(index) {
 function wallRemover(index) {
   let wall = walls[index];
   if (wall[0] + wall[2] <= 0) {
-    walls.splice(index, 1); // splice menggantikan .remove()
+    walls.splice(index, 1); 
   }
 }
 
@@ -247,10 +263,8 @@ function WatchWallCollision(index) {
   let wallBottomWidth = gapWallWidth;
   let wallBottomHeight = height - (gapWallY + gapWallHeight);
 
-  // Logika Tabrakan (Collision)
   let collision = false;
 
-  // Cek Tabrakan Atas
   if (
     (ballX + ballSize / 2 > wallTopX) &&
     (ballX - ballSize / 2 < wallTopX + wallTopWidth) &&
@@ -260,7 +274,6 @@ function WatchWallCollision(index) {
     collision = true;
   }
 
-  // Cek Tabrakan Bawah
   if (
     (ballX + ballSize / 2 > wallBottomX) &&
     (ballX - ballSize / 2 < wallBottomX + wallBottomWidth) &&
@@ -270,17 +283,15 @@ function WatchWallCollision(index) {
     collision = true;
   }
 
-  // Jika tabrakan terjadi
   if (collision) {
      health -= healthDecrease;
      if (health <= 0) {
-       gameScreen = 2; // Game Over
+       gameScreen = 2; 
      }
   }
 
-  // Scoring Logic
   if (ballX > gapWallX + (gapWallWidth / 2) && wallScored == 0) {
-    wall[4] = 1; // Tandai sudah dilewati
+    wall[4] = 1; 
     scoreGame();
   }
 }
@@ -289,11 +300,9 @@ function drawHealthBar() {
   noStroke();
   rectMode(CORNER);
   
-  // Background bar (abu-abu)
   fill(236, 240, 241);
   rect(ballX - (healthBarWidth / 2), ballY - 30, healthBarWidth, 5);
   
-  // Menentukan warna HP
   if (health > 60) {
     fill(46, 204, 113);
   } else if (health > 30) {
@@ -302,9 +311,7 @@ function drawHealthBar() {
     fill(231, 76, 60);
   }
   
-  // Menggambar bar HP yang tersisa
   let currentHealthWidth = map(health, 0, maxHealth, 0, healthBarWidth);
-  // Pastikan lebar tidak negatif
   if(currentHealthWidth < 0) currentHealthWidth = 0;
   
   rect(ballX - (healthBarWidth / 2), ballY - 30, currentHealthWidth, 5);
@@ -327,7 +334,7 @@ function restart() {
   ballX = width / 4;
   ballY = height / 5;
   lastAddTime = 0;
-  walls = []; // Mengosongkan array
+  walls = []; 
   gameScreen = 0;
   ballSpeedVert = 0;
   ballSpeedHorizon = 10;
