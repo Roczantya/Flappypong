@@ -2,9 +2,12 @@
 
 Game arcade sederhana berbasis web yang menggabungkan mekanik pantulan bola dan rintangan. Dibuat menggunakan **JavaScript** dan library **p5.js**.
 
-🔗 **[Mainkan Game Disini (Demo)](https://flappypongfanny.vercel.app/p)**
+🔗 **[Mainkan Game Disini (Demo)](https://flappypong.vercel.app)**
 
-![Gameplay Preview]() <img width="1366" height="768" alt="Image" src="https://github.com/user-attachments/assets/d6d6682b-5984-45ec-87a7-9a9769c4b6e4" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d6d6682b-5984-45ec-87a7-9a9769c4b6e4" alt="Gameplay Flappy Pong" width="100%">
+</p>
+
 ## 🎮 Cara Bermain
 
 1.  **Kontrol Raket:** Gerakkan **Mouse** kamu untuk mengendalikan posisi raket.
